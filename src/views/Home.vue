@@ -1,18 +1,131 @@
-<template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+<template lang="pug">
+  main.sketch
+    .sketch__container(
+      v-if="sketchName"
+      ref="sketchContainer"
+      @click="onClick"
+    )
+    h1(
+      v-else
+    ) No sketches
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import P5 from 'p5'
+import MainMenu from '@/components/MainMenu'
+import { gcodeExtentionForP5 } from '@/p5extentions'
+import * as sketches from '@/sketches'
 
 export default {
   name: 'home',
-  components: {
-    HelloWorld
+
+  components: { MainMenu },
+
+  data () {
+    return {
+      p5: null,
+      chunkSize: 3000,
+      socket: null,
+      controllerConfig: null
+    }
+  },
+
+  computed: {
+    sketchName () {
+      return this.$route.params.sketch
+    }
+  },
+
+  watch: {
+    sketchName (name) {
+      this.initializeSketch(name)
+    }
+  },
+
+  mounted () {
+    this.socket = new WebSocket('ws://localhost:1234')
+
+    this.socket.addEventListener('open', e => {
+      console.log('WEBSOCKET CONNECTION OPENED')
+      this.send({ action: 'get-config' })
+    })
+
+    this.socket.addEventListener('message', e => {
+      try {
+        const message = JSON.parse(e.data)
+        const { action, data } = message
+        switch (action) {
+          case 'get-config':
+            this.controllerConfig = data
+            this.initializeSketch(this.sketchName)
+            break
+          default:
+            console.log(message)
+            break
+        }
+      } catch (e) {}
+    })
+  },
+
+  methods: {
+    send (message) {
+      if (this.socket) {
+        this.socket.send(JSON.stringify(message))
+      }
+    },
+
+    initializeSketch (name) {
+      if (name) {
+        const { sketchContainer } = this.$refs
+        const { clientWidth, clientHeight } = sketchContainer
+        const { maxStepsX, maxStepsY } = this.controllerConfig
+
+        const scaleFactorWidth = maxStepsX / clientWidth
+        const scaleFactorHeight = maxStepsY / clientHeight
+        const scaleFactor = Math.min(scaleFactorWidth, scaleFactorHeight)
+
+        // Delete all existing canvas
+        const { children } = sketchContainer
+        for (const child of children) {
+          child.remove()
+        }
+
+        // Create a new p5 instance
+        this.p5 = new P5(sketches[name], sketchContainer)
+        gcodeExtentionForP5(this.p5)
+        this.p5.gcode.params.scaleFactor = scaleFactor
+      }
+    },
+
+    onClick () {
+      const chunks = this.p5.gcode.getChunks(this.chunkSize)
+      for (const chunk of chunks) {
+        this.send({
+          action: 'feedGCODE',
+          data: chunk
+        })
+      }
+    }
   }
 }
 </script>
+
+<style lang="scss">
+@import '../styles/settings.sass';
+
+.sketch {
+  width: 100%;
+  height: 100vh;
+  padding: $main-margin;
+  background: rgb(240, 240, 240);
+
+  &__container {
+    width: 100%;
+    height: 100%;
+
+    canvas {
+      background: white;
+    }
+  }
+}
+</style>
