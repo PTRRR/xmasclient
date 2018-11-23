@@ -1,5 +1,8 @@
 <template lang="pug">
   main.sketch
+    button.sketch__stop(
+      @click="stop"
+    ) Stop
     .sketch__container(
       v-if="sketchName"
       ref="sketchContainer"
@@ -94,6 +97,7 @@ export default {
         this.p5 = new P5(sketches[name], sketchContainer)
         gcodeExtentionForP5(this.p5)
         this.p5.gcode.params.scaleFactor = scaleFactor
+        this.p5.draw()
       }
     },
 
@@ -105,6 +109,10 @@ export default {
           data: chunk
         })
       }
+    },
+
+    stop () {
+      this.send({ action: 'stop' })
     }
   }
 }
@@ -126,6 +134,12 @@ export default {
     canvas {
       background: white;
     }
+  }
+
+  &__stop {
+    position: fixed;
+    top: 0;
+    right: 0;
   }
 }
 </style>

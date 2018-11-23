@@ -70,7 +70,7 @@ export function gcodeExtentionForP5 (p5) {
       const xC = Math.cos(angle) * (xd * 0.5) + x
       const yC = Math.sin(angle) * (yd * 0.5) + y
 
-      path.push({ X: xC, Y: yC, Z: i > 0 ? 0 : 1 })
+      path.push({ X: xC, Y: yC, Z: i > 0 ? 1 : 0 })
     }
 
     return ellipse.apply(this, arguments)
@@ -97,11 +97,11 @@ export function gcodeExtentionForP5 (p5) {
     }
 
     const { path } = this.gcode
-    path.push({ X: x + offsetX, Y: y + offsetY, Z: 1 })
-    path.push({ X: x + w + offsetX, Y: y + offsetY, Z: 0 })
-    path.push({ X: x + w + offsetX, Y: y + h + offsetY, Z: 0 })
-    path.push({ X: x + offsetX, Y: y + h + offsetY, Z: 0 })
     path.push({ X: x + offsetX, Y: y + offsetY, Z: 0 })
+    path.push({ X: x + w + offsetX, Y: y + offsetY, Z: 1 })
+    path.push({ X: x + w + offsetX, Y: y + h + offsetY, Z: 1 })
+    path.push({ X: x + offsetX, Y: y + h + offsetY, Z: 1 })
+    path.push({ X: x + offsetX, Y: y + offsetY, Z: 1 })
     return rect.apply(this, arguments)
   }
 
@@ -109,10 +109,10 @@ export function gcodeExtentionForP5 (p5) {
   const triangle = p5.triangle
   p5.triangle = function (x1, y1, x2, y2, x3, y3) {
     const { path } = this.gcode
-    path.push({ X: x1, Y: y1, Z: 1 })
-    path.push({ X: x2, Y: y2, Z: 0 })
-    path.push({ X: x3, Y: y3, Z: 0 })
     path.push({ X: x1, Y: y1, Z: 0 })
+    path.push({ X: x2, Y: y2, Z: 1 })
+    path.push({ X: x3, Y: y3, Z: 1 })
+    path.push({ X: x1, Y: y1, Z: 1 })
     return triangle.apply(this, arguments)
   }
 
@@ -120,11 +120,11 @@ export function gcodeExtentionForP5 (p5) {
   const quad = p5.quad
   p5.quad = function (x1, y1, x2, y2, x3, y3, x4, y4) {
     const { path } = this.gcode
-    path.push({ X: x1, Y: y1, Z: 1 })
-    path.push({ X: x2, Y: y2, Z: 0 })
-    path.push({ X: x3, Y: y3, Z: 0 })
-    path.push({ X: x4, Y: y4, Z: 0 })
     path.push({ X: x1, Y: y1, Z: 0 })
+    path.push({ X: x2, Y: y2, Z: 1 })
+    path.push({ X: x3, Y: y3, Z: 1 })
+    path.push({ X: x4, Y: y4, Z: 1 })
+    path.push({ X: x1, Y: y1, Z: 1 })
     return quad.apply(this, arguments)
   }
 
@@ -132,8 +132,8 @@ export function gcodeExtentionForP5 (p5) {
   const line = p5.line
   p5.line = function (x1, y1, x2, y2) {
     const { path } = this.gcode
-    path.push({ X: x1, Y: y1, Z: 1 })
-    path.push({ X: x2, Y: y2, Z: 0 })
+    path.push({ X: x1, Y: y1, Z: 0 })
+    path.push({ X: x2, Y: y2, Z: 1 })
     return line.apply(this, arguments)
   }
 
