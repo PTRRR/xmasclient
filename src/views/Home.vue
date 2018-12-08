@@ -29,7 +29,7 @@ export default {
       p5: null,
       chunkSize: 3000,
       socket: null,
-      controllerConfig: null
+      controllerConfig: {}
     }
   },
 
@@ -68,6 +68,8 @@ export default {
         }
       } catch (e) {}
     })
+
+    this.initializeSketch(this.sketchName)
   },
 
   methods: {
