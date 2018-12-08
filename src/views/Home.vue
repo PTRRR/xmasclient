@@ -98,19 +98,18 @@ export default {
         // Create a new p5 instance
         this.p5 = new P5(sketches[name], sketchContainer)
         gcodeExtentionForP5(this.p5)
-        this.p5.gcode.params.scaleFactor = scaleFactor
+        this.p5.gcode.setScaleFactor(scaleFactor)
         this.p5.draw()
       }
     },
 
     onClick () {
-      const chunks = this.p5.gcode.getChunks(this.chunkSize)
-      for (const chunk of chunks) {
-        this.send({
-          action: 'feedGCODE',
-          data: chunk
-        })
-      }
+      const gcode = this.p5.gcode.getString()
+      console.log(gcode.split('\n'))
+      this.send({
+        action: 'feedGCODE',
+        data: gcode
+      })
     },
 
     stop () {
