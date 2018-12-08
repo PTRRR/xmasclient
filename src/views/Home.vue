@@ -85,11 +85,14 @@ export default {
       if (name) {
         const { sketchContainer } = this.$refs
         const { clientWidth, clientHeight } = sketchContainer
+        const clientRatio = clientWidth / clientHeight
         const { maxStepsX, maxStepsY } = this.controllerConfig
+        const controllerRatio = maxStepsX / maxStepsY
 
         const scaleFactorWidth = maxStepsX / clientWidth
         const scaleFactorHeight = maxStepsY / clientHeight
-        const scaleFactor = Math.min(scaleFactorWidth, scaleFactorHeight)
+        const scaleFactor = controllerRatio > clientRatio
+          ? scaleFactorWidth : scaleFactorHeight
 
         // Delete all existing canvas
         const { children } = sketchContainer
@@ -150,8 +153,15 @@ export default {
   &__container {
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     canvas {
+      max-width: 100%;
+      max-height: 100%;
+      // width: auto;
+      height: auto;
       background: white;
     }
   }
