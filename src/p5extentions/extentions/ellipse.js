@@ -2,7 +2,7 @@ export function ellipse (p5) {
   const ellipse = p5.ellipse
 
   p5.ellipse = function (x, y, xd, yd) {
-    const steps = 60
+    const steps = 100
     for (let i = 0; i < steps + 1; i++) {
       const angle = (i / steps) * 2 * Math.PI
       const xC = Math.cos(angle) * (xd * 0.5) + x

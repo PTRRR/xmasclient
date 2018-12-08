@@ -1,29 +1,37 @@
 // import SimplexNoise from 'simplex-noise'
-const imgUrl = require('./valais.png')
+import { createCanvas } from '../utils'
+// const imgUrl = require('./valais.png')
+const foulyUrl = require('./fouly_1.png')
 
 // const simplex = new SimplexNoise()
 let img = null
 
 export function mountains1 (p5) {
   p5.preload = function () {
-    img = p5.loadImage(imgUrl)
+    img = p5.loadImage(foulyUrl)
   }
 
   p5.setup = function () {
-    const container = document.querySelector('.sketch__container')
-    const { clientWidth, clientHeight } = container
-    p5.createCanvas(clientWidth, clientHeight)
+    createCanvas(p5)
     p5.pixelDensity(1)
     p5.noLoop()
   }
 
   p5.draw = function () {
     p5.background(255)
-    p5.image(img, (p5.width - p5.height) * 0.5, (0) * 0.5, p5.height, p5.height)
+    const offset = 100
+    p5.translate(p5.width * 0.5 - 110, p5.height * 0.5)
+    p5.rotate(Math.PI * 0.5)
+    p5.imageMode(p5.CENTER)
+    p5.image(img, 0, 0, p5.height - offset, p5.height - offset)
+    p5.rotate(-Math.PI * 0.5)
+    p5.translate(-p5.width * 0.5 + 110, -p5.height * 0.5)
     p5.loadPixels()
     p5.background(255)
+    p5.noFill()
+    // p5.rect(offset * 0.5, offset * 0.5, p5.width - offset - 1, p5.height - offset - 1)
 
-    const amount = 300
+    const amount = 400
     const steps = 200
     const stepY = p5.height / steps
     const stepX = p5.width / amount
@@ -46,7 +54,7 @@ export function mountains1 (p5) {
         const b = p5.pixels[pixelIndex + 2]
         const br = 1 - (((r + g + b) / 3) / 255)
         // p5.ellipse(x, y, 20, 20)
-        const a = 90
+        const a = 150
         const offset = 200
         if (br > 0 && lbr > 0) {
           p5.line(x + lbr * a - offset, ly, x + (br * a || 0) - offset, y)
