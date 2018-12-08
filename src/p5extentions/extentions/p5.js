@@ -35,7 +35,7 @@ export function p5 (p5) {
       return this
     }
 
-    function optimizeCommands () {
+    function getOptimizedCommands () {
       const positionFilteredCommands = []
       let index = 0
       let lastPos = null
@@ -48,7 +48,9 @@ export function p5 (p5) {
         if (command === 'G0' || command === 'G1') {
           const pos = args
           if (lastPos) {
-            const dist = Math.sqrt(Math.pow(pos.x - lastPos.x, 2) + Math.pow(pos.y - lastPos.y, 2))
+            const dist = Math.sqrt(
+              Math.pow(pos.x - lastPos.x, 2) + Math.pow(pos.y - lastPos.y, 2)
+            )
             if (dist > 0) {
               positionFilteredCommands.push(commands[index])
             }
@@ -84,14 +86,14 @@ export function p5 (p5) {
         index++
       }
 
-      commands = drawFilteredCommands
+      return drawFilteredCommands
     }
 
     function getString () {
-      optimizeCommands()
+      const optimizedCommands = getOptimizedCommands()
       let string = ''
       let index = 1
-      for (const command of commands) {
+      for (const command of optimizedCommands) {
         const { gCommand, mCommand, args } = command
         const commandName = gCommand || mCommand
 

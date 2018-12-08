@@ -50,26 +50,28 @@ export default {
 
     this.socket.addEventListener('open', e => {
       console.log('WEBSOCKET CONNECTION OPENED')
-      this.send({ action: 'get-config' })
+      this.send({ type: 'getConfig' })
     })
 
     this.socket.addEventListener('message', e => {
       try {
         const message = JSON.parse(e.data)
-        const { action, data } = message
-        switch (action) {
-          case 'get-config':
+        const { type, data } = message
+        switch (type) {
+          case 'getConfig':
             this.controllerConfig = data
             this.initializeSketch(this.sketchName)
             break
           default:
-            console.log(message)
+            if (data) {
+              console.log(data)
+            }
             break
         }
-      } catch (e) {}
+      } catch (e) { }
     })
 
-    this.initializeSketch(this.sketchName)
+    // this.initializeSketch(this.sketchName);
   },
 
   methods: {
@@ -79,7 +81,7 @@ export default {
       }
     },
 
-    initializeSketch (name) {
+    async initializeSketch (name) {
       if (name) {
         const { sketchContainer } = this.$refs
         const { clientWidth, clientHeight } = sketchContainer
@@ -96,31 +98,48 @@ export default {
         }
 
         // Create a new p5 instance
+        window.controllerConfig = this.controllerConfig
         this.p5 = new P5(sketches[name], sketchContainer)
-        gcodeExtentionForP5(this.p5)
+        await gcodeExtentionForP5(this.p5)
         this.p5.gcode.setScaleFactor(scaleFactor)
-        this.p5.draw()
+        if (this.p5._renderer) {
+          this.p5.draw()
+        }
       }
     },
 
     onClick () {
       const gcode = this.p5.gcode.getString()
-      console.log(gcode.split('\n'))
+      const gcodeCommands = gcode.split('\n')
+      let chunk = []
+      const MAX_CHUNK_SIZE = 200
+      for (const [index, gcodeCommand] of gcodeCommands.entries()) {
+        if (index % MAX_CHUNK_SIZE === MAX_CHUNK_SIZE) {
+          this.send({
+            type: 'feed',
+            data: chunk.join('\n')
+          })
+          chunk = []
+        } else {
+          chunk.push(gcodeCommand)
+        }
+      }
+
       this.send({
-        action: 'feedGCODE',
-        data: gcode
+        type: 'feed',
+        data: chunk.join('\n')
       })
     },
 
     stop () {
-      this.send({ action: 'stop' })
+      this.send({ type: 'stop' })
     }
   }
 }
 </script>
 
 <style lang="scss">
-@import '../styles/settings.sass';
+@import "../styles/settings.sass";
 
 .sketch {
   width: 100%;

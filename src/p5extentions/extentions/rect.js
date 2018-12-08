@@ -13,7 +13,7 @@ export function rect (p5) {
     }
 
     this.gcode
-      .addCommand('G1', { x: x + offsetX, y: y + offsetY })
+      .addCommand('G0', { x: x + offsetX, y: y + offsetY })
       .addCommand('G11')
       .addCommand('G1', { x: x + w + offsetX, y: y + offsetY })
       .addCommand('G1', { x: x + w + offsetX, y: y + h + offsetY })
