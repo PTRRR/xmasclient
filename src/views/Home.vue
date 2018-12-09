@@ -106,6 +106,7 @@ export default {
         await gcodeExtentionForP5(this.p5)
         this.p5.gcode.setScaleFactor(scaleFactor)
         if (this.p5._renderer) {
+          console.log('asdlkjh')
           this.p5.draw()
         }
       }
