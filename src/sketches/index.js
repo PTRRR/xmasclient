@@ -1,5 +1,6 @@
 export * from './maze'
 export * from './tests'
+export * from './threes'
 export * from './circles'
 export * from './mountains'
 export * from './spirale'

@@ -20,12 +20,12 @@ export function mountains1 (p5) {
   p5.draw = function () {
     p5.background(255)
     const offset = 100
-    p5.translate(p5.width * 0.5 - 100, p5.height * 0.5)
+    p5.translate(p5.width * 0.5 - 0, p5.height * 0.5)
     p5.rotate(Math.PI * 0.5)
     p5.imageMode(p5.CENTER)
     p5.image(img, 0, 0, p5.height - offset, p5.height - offset)
     p5.rotate(-Math.PI * 0.5)
-    p5.translate(-p5.width * 0.5 + 100, -p5.height * 0.5)
+    p5.translate(-p5.width * 0.5 + 0, -p5.height * 0.5)
     p5.loadPixels()
     p5.background(255)
     // p5.noFill()
