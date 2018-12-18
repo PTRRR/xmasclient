@@ -1,16 +1,20 @@
 <template lang="pug">
   main.sketch
-    button.sketch__stop(
-      @click="stop"
-    ) Stop
+    .sketch__printing(v-show="printing")
+      .sketch__printing-inner
+        h3.sketch__printing-text Printing...
+        button.sketch__printing-stop(@click="stop")
     .sketch__container(
       v-if="sketchName"
       ref="sketchContainer"
-      @click="onClick"
     )
     h1(
       v-else
     ) No sketches
+
+    button.sketch__print(@click="onClick")
+      svg(viewBox="0 0 400 400")
+        polyline(points="348.5 108.75 166 291.25 51.5 176.75")
 </template>
 
 <script>
@@ -29,7 +33,8 @@ export default {
       p5: null,
       chunkSize: 3000,
       socket: null,
-      controllerConfig: {}
+      controllerConfig: {},
+      printing: false
     }
   },
 
@@ -46,7 +51,7 @@ export default {
   },
 
   mounted () {
-    this.socket = new WebSocket('ws://localhost:1234')
+    this.socket = new WebSocket('ws://10.192.235.1:1234')
 
     this.socket.addEventListener('open', e => {
       console.log('WEBSOCKET CONNECTION OPENED')
@@ -62,9 +67,13 @@ export default {
             this.controllerConfig = data
             this.initializeSketch(this.sketchName)
             break
+          case 'finished-printing':
+            console.log('SOCKET MESSAGE:', 'Finished')
+            this.printing = false
+            break
           default:
-            if (data) {
-              console.log(data)
+            if (type) {
+              console.log('SOCKET MESSAGE:', type)
             }
             break
         }
@@ -133,6 +142,8 @@ export default {
         type: 'feed',
         data: chunk.join('\n')
       })
+
+      this.printing = true
     },
 
     stop () {
@@ -146,10 +157,65 @@ export default {
 @import "../styles/settings.sass";
 
 .sketch {
+  $sk: &;
   width: 100%;
   height: 100vh;
-  padding: $main-margin;
+  padding: $main-margin * 0.5;
   background: rgb(240, 240, 240);
+
+  &__printing {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.9);
+
+    #{$sk}__printing-inner {
+      text-align: center;
+    }
+
+    #{$sk}__printing-text {
+      color: black;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    #{$sk}__printing-stop {
+      color: white;
+      background: #ff0031;
+      border: none;
+      padding: 1rem;
+      border-radius: 100%;
+      width: $main-margin;
+      height: $main-margin;
+      position: relative;
+
+      &:before,
+      &:after {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 70%;
+        height: 4px;
+        background: white;
+      }
+
+      &:before {
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      &:after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
+  }
 
   &__container {
     width: 100%;
@@ -161,16 +227,29 @@ export default {
     canvas {
       max-width: 100%;
       max-height: 100%;
-      // width: auto;
       height: auto;
       background: white;
     }
   }
 
-  &__stop {
+  &__print {
     position: fixed;
-    top: 0;
+    z-index: 0;
+    bottom: 0;
     right: 0;
+    width: $main-margin;
+    height: $main-margin;
+    margin: 1rem;
+    background: #00ff6b;
+    border: none;
+    border-radius: 100%;
+    padding: 0.4em;
+
+    polyline {
+      fill: transparent;
+      stroke: white;
+      stroke-width: 30px;
+    }
   }
 }
 </style>

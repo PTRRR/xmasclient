@@ -40,24 +40,29 @@ export default {
 
 .menu {
   position: fixed;
+  z-index: 100;
 
   &__icon {
     cursor: pointer;
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     top: 0;
     right: 0;
     width: $main-margin;
     height: $main-margin;
-    padding: 0.7rem 0.5rem 0.7rem 0.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background: white;
+    border-radius: 100%;
+    margin: 1rem;
+    padding: 1.1em 0.8em 1.1em 0.8em;
+    mix-blend-mode: difference;
   }
 
   &__bar {
     width: 100%;
-    height: 3px;
+    height: 4px;
     background: black;
   }
 
