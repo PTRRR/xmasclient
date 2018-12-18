@@ -19,6 +19,7 @@
 
 <script>
 import P5 from 'p5'
+import { IP } from '@/ip'
 import MainMenu from '@/components/MainMenu'
 import { gcodeExtentionForP5 } from '@/p5extentions'
 import * as sketches from '@/sketches'
@@ -51,7 +52,7 @@ export default {
   },
 
   mounted () {
-    this.socket = new WebSocket('ws://10.192.235.1:1234')
+    this.socket = new WebSocket(`ws://${IP}:1234`)
 
     this.socket.addEventListener('open', e => {
       console.log('WEBSOCKET CONNECTION OPENED')

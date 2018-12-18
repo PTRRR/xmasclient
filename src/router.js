@@ -10,12 +10,18 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        title: 'X-MAS CLIENT'
+      }
     },
     {
       path: '/:sketch',
       name: 'sketch',
-      component: Home
+      component: Home,
+      meta: {
+        title: 'askjh'
+      }
     }
   ]
 })
