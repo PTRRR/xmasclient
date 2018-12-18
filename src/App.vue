@@ -13,4 +13,8 @@ export default {
 
 <style lang="scss">
 @import './styles/index.scss';
+
+html, body {
+  overflow: hidden;
+}
 </style>

@@ -12,7 +12,27 @@
       v-else
     ) No sketches
 
-    button.sketch__print(@click="onClick")
+    .sketch__settings-container(
+      v-if="initialized"
+      v-show="showSettings"
+    )
+      component(
+        v-for="(input, index) in p5.inputs"
+        :key="index"
+        :is="`Sketch${input.type}`"
+        :attr="input.attr"
+        @onValue="input.onValue"
+      )
+
+    button.sketch__settings(
+      @click="toggleSettings()"
+      v-if="initialized && p5.inputs"
+      :class="{ 'sketch__settings--minus': showSettings }"
+    )
+
+    button.sketch__print(
+      @click="onClick"
+    )
       svg(viewBox="0 0 400 400")
         polyline(points="348.5 108.75 166 291.25 51.5 176.75")
 </template>
@@ -23,11 +43,12 @@ import { IP } from '@/ip'
 import MainMenu from '@/components/MainMenu'
 import { gcodeExtentionForP5 } from '@/p5extentions'
 import * as sketches from '@/sketches'
+import * as sketchComponents from '@/components/sketch-components'
 
 export default {
   name: 'home',
 
-  components: { MainMenu },
+  components: { MainMenu, ...sketchComponents },
 
   data () {
     return {
@@ -35,7 +56,9 @@ export default {
       chunkSize: 3000,
       socket: null,
       controllerConfig: {},
-      printing: false
+      printing: false,
+      showSettings: false,
+      initialized: false
     }
   },
 
@@ -80,8 +103,6 @@ export default {
         }
       } catch (e) { }
     })
-
-    // this.initializeSketch(this.sketchName);
   },
 
   methods: {
@@ -115,8 +136,9 @@ export default {
         this.p5 = new P5(sketches[name], sketchContainer)
         await gcodeExtentionForP5(this.p5)
         this.p5.gcode.setScaleFactor(scaleFactor)
+        this.initialized = true
+
         if (this.p5._renderer) {
-          console.log('asdlkjh')
           this.p5.draw()
         }
       }
@@ -149,6 +171,10 @@ export default {
 
     stop () {
       this.send({ type: 'stop' })
+    },
+
+    toggleSettings () {
+      this.showSettings = !this.showSettings
     }
   }
 }
@@ -163,6 +189,19 @@ export default {
   height: 100vh;
   padding: $main-margin * 0.5;
   background: rgb(240, 240, 240);
+
+  &__settings-container {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: $main-margin * 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
 
   &__printing {
     position: fixed;
@@ -235,7 +274,7 @@ export default {
 
   &__print {
     position: fixed;
-    z-index: 0;
+    z-index: 30;
     bottom: 0;
     right: 0;
     width: $main-margin;
@@ -250,6 +289,47 @@ export default {
       fill: transparent;
       stroke: white;
       stroke-width: 30px;
+    }
+  }
+
+  &__settings {
+    $s: &;
+    position: fixed;
+    z-index: 50;
+    bottom: 0;
+    left: 0;
+    width: $main-margin;
+    height: $main-margin;
+    margin: 1rem;
+    background: rgb(150, 150, 150);
+    border: none;
+    border-radius: 100%;
+    padding: 0.8em;
+
+    &:before,
+    &:after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 70%;
+      height: 4px;
+      background: white;
+    }
+
+    &:before {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    &:after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    &--minus {
+      &:after {
+        display: none;
+      }
     }
   }
 }
