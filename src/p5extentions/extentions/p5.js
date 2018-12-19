@@ -51,7 +51,7 @@ export function p5 (p5) {
             const dist = Math.sqrt(
               Math.pow(pos.x - lastPos.x, 2) + Math.pow(pos.y - lastPos.y, 2)
             )
-            if (dist > 4) {
+            if (dist > 0) {
               positionFilteredCommands.push(commands[index])
             }
           } else {

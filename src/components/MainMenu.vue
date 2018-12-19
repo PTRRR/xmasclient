@@ -17,7 +17,7 @@
         )
           router-link(
             :to="sketch.name"
-          ) {{ sketch.name }}
+          ) {{ formatSketchName(sketch.name) }}
 </template>
 
 <script>
@@ -30,6 +30,21 @@ export default {
     return {
       show: false,
       sketches
+    }
+  },
+
+  methods: {
+    formatSketchName (sketchName) {
+      const parts = sketchName.split('_')
+      for (let i = 0; i < parts.length; i++) {
+        parts[i] = this.capitalize(parts[i])
+      }
+      return parts.join(' - ')
+    },
+
+    capitalize (string) {
+      if (typeof string !== 'string') return ''
+      return string.charAt(0).toUpperCase() + string.slice(1)
     }
   }
 }
