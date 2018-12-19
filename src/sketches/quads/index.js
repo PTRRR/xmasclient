@@ -53,3 +53,61 @@ export function quads (p5) {
     }
   ]
 }
+
+// eslint-disable-next-line
+export function quads_2 (p5) {
+  let side = true
+
+  p5.setup = function () {
+    createCanvas(p5)
+    p5.noLoop()
+    p5.noFill()
+  }
+
+  p5.draw = function () {
+    p5.background(255)
+    const amount = 100
+    const offset = 40
+
+    if (side) {
+      for (let i = 0; i < amount + 1; i++) {
+        const x1 = p5.width * 0.5 - p5.height * 0.5
+        const x2 = p5.width * 0.5 + p5.height * 0.5
+        const y1 = p5.height * 0.5
+        const y2 = offset + (p5.height - offset * 2) * (i / amount)
+
+        if (i % 2 === 0) {
+          p5.line(x1, y1, x2, y2)
+        } else {
+          p5.line(x2, y2, x1, y1)
+        }
+      }
+    } else {
+      for (let i = 0; i < amount + 1; i++) {
+        const x1 = p5.width * 0.5 + p5.height * 0.5
+        const x2 = p5.width * 0.5 - p5.height * 0.5
+        const y1 = p5.height * 0.5
+        const y2 = offset + ((p5.height - (offset * 2)) / amount) * i
+
+        if (i % 2 === 0) {
+          p5.line(x1, y1, x2, y2)
+        } else {
+          p5.line(x2, y2, x1, y1)
+        }
+      }
+    }
+  }
+
+  p5.inputs = [
+    {
+      type: 'Button',
+      attr: {
+        value: side
+      },
+      onValue: () => {
+        side = !side
+        p5.draw()
+      }
+    }
+  ]
+}
