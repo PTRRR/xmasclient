@@ -11,8 +11,11 @@ export function test1 (p5) {
   p5.draw = function () {
     p5.background(255)
     // const offset = 200
-    p5.rect(0, 0, p5.width - 1, p5.height - 1)
-    p5.ellipse(x, p5.height * 0.5, p5.height * 0.5, p5.height * 0.5)
+    p5.beginShape()
+    p5.vertex(x, 100)
+    p5.vertex(100, 300)
+    p5.vertex(200, 400)
+    p5.endShape()
   }
 
   p5.mouseClick = function () { }

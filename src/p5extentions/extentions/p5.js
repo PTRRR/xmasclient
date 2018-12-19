@@ -3,6 +3,14 @@ export function p5 (p5) {
   const gcode = function (p5) {
     let commands = []
     let scaleFactor = 1
+    let state = {
+      drawing: false,
+      beginShape: false
+    }
+
+    function getState () {
+      return state
+    }
 
     function clear () {
       commands = []
@@ -118,7 +126,8 @@ export function p5 (p5) {
       getLastPositionCommand,
       setScaleFactor,
       addCommand,
-      getString
+      getString,
+      getState
     }
   }
 

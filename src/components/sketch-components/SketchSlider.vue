@@ -30,7 +30,7 @@ export default {
     onInput (e) {
       const { target } = e
       const { value } = target
-      this.$emit('onValue', value)
+      this.$emit('onValue', parseFloat(value))
     }
   }
 }
