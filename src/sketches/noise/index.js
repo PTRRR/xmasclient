@@ -3,9 +3,9 @@ import SimplexNoise from 'simplex-noise'
 
 // eslint-disable-next-line
 export function noise (p5) {
-  let steps = 50
-  let amount = 40
-  let displacement = 40
+  let steps = 200
+  let amount = 60
+  let displacement = 60
 
   let simplex = new SimplexNoise(Math.random())
   p5.setup = function () {
@@ -26,17 +26,17 @@ export function noise (p5) {
         if (i === 0) {
           const angle = (j / steps) * Math.PI * 2 + (Math.PI * 0.5)
           if (angle < Math.PI + (Math.PI * 0.5)) {
-            const x = Math.cos(angle) * radius * percent + cX - (cX - radius) * 0.4
-            const y = Math.sin(angle) * radius + cY
-            const noise = simplex.noise2D(x * 0.006, y * 0.006) * displacement * (1 - percent)
-            p5.vertex(x + noise, y)
+            const y = Math.cos(angle) * radius * percent + cY
+            const x = Math.sin(angle) * radius + cX - (cX * 0.2)
+            const noise = simplex.noise2D(x * 0.0045, y * 0.0045) * displacement * (1 - Math.pow(percent, 2) * 1)
+            p5.vertex(x, y + noise)
           }
         } else {
           const angle = (j / steps) * Math.PI * 2
-          const x = Math.cos(angle) * radius * percent + cX - (cX - radius) * 0.4
-          const y = Math.sin(angle) * radius + cY
-          const noise = simplex.noise2D(x * 0.006, y * 0.006) * displacement * (1 - percent)
-          p5.vertex(x + noise, y)
+          const y = Math.cos(angle) * radius * percent + cY
+          const x = Math.sin(angle) * radius + cX - (cX * 0.2)
+          const noise = simplex.noise2D(x * 0.0045, y * 0.0045) * displacement * (1 - Math.pow(percent, 2) * 1)
+          p5.vertex(x, y + noise)
         }
       }
       p5.endShape()
@@ -49,7 +49,7 @@ export function noise (p5) {
       attr: {
         value: 'Steps',
         min: 3,
-        max: 120
+        max: 300
       },
 
       onValue: value => {
@@ -63,7 +63,7 @@ export function noise (p5) {
       attr: {
         value: 'Amount',
         min: 1,
-        max: 60
+        max: 120
       },
 
       onValue: value => {
@@ -77,7 +77,7 @@ export function noise (p5) {
       attr: {
         value: 'Displacement',
         min: 20,
-        max: 200
+        max: 400
       },
 
       onValue: value => {
